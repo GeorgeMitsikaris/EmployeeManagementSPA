@@ -1,24 +1,36 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+﻿@{ 
+    ViewBag.Title = "Employee Index";
+}
+
+<div class="container mt-3">
+    <div class="row">
+        <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div class="row offset-2 col-8">
+        <div class="text-left display-4 m-auto">Employees</div>
+        <table id="tblItems" class="table table-striped text-center mt-3">
+            <thead>
+                <tr class="table-info">
+                    <td class="font-weight-bold">
+                        <button id="sortByName" class="btn btn-block btn-warning">
+                            <p class="pr-3 d-inline">Name</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
+                        </button>
+                        <div class="input-group-append">
+                            <input id="txtSearchName" type="text" class="form-control" placeholder="Search Name" style="border-bottom-right-radius:0; border-top-right-radius:0" />
+                            <button id="searchName" class="fa fa-search btn btn-light"></button>
+                        </div>
+                    </td>
+                    <td class="font-weight-bold">
+                        <button id="sortByEmail" class="btn btn-block btn-warning mr-3"><p class="pr-3 d-inline">Email</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span></button>
+                        <div class="input-group-append">
+                            <input id="txtSearchEmail" type="text" class="form-control" placeholder="Search Email" style="border-bottom-right-radius:0; border-top-right-radius:0" />
+                            <button id="searchEmail" class="fa fa-search btn btn-light"></button>
+                        </div>
+                    </td>
+                    <td colspan="2" class="font-weight-bold">Actions</td>
+                </tr>
+            </thead>
+            <tbody id="tblBody"></tbody>
+        </table>
     </div>
 </div>
