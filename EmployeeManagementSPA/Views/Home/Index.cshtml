@@ -1,4 +1,4 @@
-﻿@{ 
+﻿@{
     ViewBag.Title = "Employee Index";
 }
 
@@ -6,7 +6,7 @@
     <div class="row">
         <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
     </div>
-    <div class="row offset-2 col-8">
+    <div class="row offset-2 col-sm-8">
         <div class="text-left display-4 m-auto">Employees</div>
         <table id="tblEmployees" class="table table-striped text-center mt-3">
             <thead>
@@ -73,10 +73,74 @@
     </div>
 </div>
 
+<div id="editModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Edit Item Type</div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input id="idToEdit" type="hidden" />
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="editName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="editEmail" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="salary">Salary</label>
+                        <input type="text" id="editSalary" class="form-control" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btnEditItem" class="btn btn-info" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Are you sure you want to delete this Item Type?</div>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input id="idToDelete" type="hidden" />
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="deleteName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="deleteEmail" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="salary">Salary</label>
+                        <input type="text" id="deleteSalary" class="form-control" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDeleteItem" class="btn btn-info" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
 
         // Ajax call to get all employees
+        // The edit and delete buttons are created dynamically
+        // They trigger the respective modal passing the Id through the data-id attribute
         function getEmployees() {
             $.ajax({
                 url: '/employees',
@@ -88,6 +152,12 @@
                                 <td>${val.Name}</td>
                                 <td>${val.Email}</td>
                                 <td>${val.Salary}</td>
+                                <td>
+                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
+                                </td>
                             </tr>`
                         )
                     })
@@ -106,15 +176,15 @@
                 url: '/employees',
                 method: 'post',
                 //Using concise ES6 syntax
-                data: {Name, Email},
+                data: { Name, Email, Salary },
                 success: function () {
-                     $('#tblEmployees').append(`
+                    $('#tblEmployees').append(`
                         <tr>
                             <td>${Name}</td>
                             <td>${Email}</td>
                             <td>${Salary}</td>
                         </tr>`
-                     )
+                    )
                 },
                 error: function (error) {
                     console.log(error);
@@ -122,4 +192,44 @@
             })
         })
     })
+
+    //Functions
+
+    //This function finds the employee to be edited and fills the fields of the modal
+    function editItem(element) {
+        //Retrieves the id from the custom data-id attribute
+        const id = $(element).data('id');
+        $.ajax({
+            url: '/employees/' + id,
+            method: 'get',
+            success: function (response) {
+                console.log(response);
+                $('#editName').val(response.Name)
+                $('#editEmail').val(response.Email)
+                $('#editSalary').val(response.Salary)
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    //This function finds the employee to be deleted and fills the fields of the modal
+    function deleteItem(element) {
+        //Retrieves the id from the custom data-id attribute
+        const id = $(element).data('id');
+        $.ajax({
+            url: '/employees/' + id,
+            method: 'get',
+            success: function (response) {
+                console.log(response);
+                $('#deleteName').val(response.Name)
+                $('#deleteEmail').val(response.Email)
+                $('#deleteSalary').val(response.Salary)
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
 </script>
