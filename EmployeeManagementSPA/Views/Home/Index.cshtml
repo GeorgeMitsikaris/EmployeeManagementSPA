@@ -138,33 +138,7 @@
 <script>
     $(document).ready(function () {
 
-        // Ajax call to get all employees
-        // The edit and delete buttons are created dynamically
-        // They trigger the respective modal passing the Id through the data-id attribute
-        function getEmployees() {
-            $.ajax({
-                url: '/employees',
-                method: 'get',
-                success: function (response) {
-                    $.each(response, (ind, val) => {
-                        $('#tblEmployees').append(`
-                            <tr>
-                                <td>${val.Name}</td>
-                                <td>${val.Email}</td>
-                                <td>${val.Salary}</td>
-                                <td>
-                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
-                                </td>
-                            </tr>`
-                        )
-                    })
-                }
-            })
-        }
-
+        //Call the function getEmployees() which is declared below using hoisting
         getEmployees();
 
         //Ajax call to create a new employee
@@ -178,7 +152,7 @@
                 //Using concise ES6 syntax
                 data: { Name, Email, Salary },
                 success: function () {
-                    $('#tblEmployees').append(`
+                    table.append(`
                         <tr>
                             <td>${Name}</td>
                             <td>${Email}</td>
@@ -191,11 +165,78 @@
                 }
             })
         })
+
+        //Ajax call to update the Employee details
+        $('#btnEditItem').click(function () {
+            const id = $('#idToEdit').val();
+            const Name = $('#editName').val();
+            const Email = $('#editEmail').val();
+            const Salary = $('#editSalary').val();
+
+            $.ajax({
+                url: '/employees/' + id,
+                method: 'put',
+                 //Using concise ES6 syntax
+                data: { Name, Email, Salary },
+                success: function () {
+                    getEmployees();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            })
+        })
+
+        //Ajax call to delet the Employee
+        $('#btnDeleteItem').click(function () {
+            const id = $('#idToDelete').val();
+            console.log(id);
+            $.ajax({
+                url: '/employees/' + id,
+                method: 'delete',
+                success: function () {
+                    getEmployees();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            })
+        })
     })
 
     //Functions
 
-    //This function finds the employee to be edited and fills the fields of the modal
+    // Ajax call to get all employees
+    // The edit and delete buttons are created dynamically
+    // They trigger the respective modal passing the Id through the data-id attribute
+    function getEmployees() {
+        const table = $('#tblEmployees')
+
+        $.ajax({
+            url: '/employees',
+            method: 'get',
+            success: function (response) {
+                table.find("tr:gt(0)").remove();
+                $.each(response, (ind, val) => {
+                    $('#tblEmployees').append(`
+                            <tr>
+                                <td>${val.Name}</td>
+                                <td>${val.Email}</td>
+                                <td>${val.Salary}</td>
+                                <td>
+                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
+                                </td>
+                            </tr>`
+                    )
+                })
+            }
+        })
+    }
+
+    //This function finds the employee to be edited and fills the fields of the modal with their respective values
     function editItem(element) {
         //Retrieves the id from the custom data-id attribute
         const id = $(element).data('id');
@@ -203,10 +244,10 @@
             url: '/employees/' + id,
             method: 'get',
             success: function (response) {
-                console.log(response);
                 $('#editName').val(response.Name)
                 $('#editEmail').val(response.Email)
                 $('#editSalary').val(response.Salary)
+                $('#idToEdit').val(response.Id)
             },
             error: function (error) {
                 console.log(error);
@@ -214,7 +255,7 @@
         })
     }
 
-    //This function finds the employee to be deleted and fills the fields of the modal
+    //This function finds the employee to be deleted and fills the fields of the modal with their respective values
     function deleteItem(element) {
         //Retrieves the id from the custom data-id attribute
         const id = $(element).data('id');
@@ -222,10 +263,10 @@
             url: '/employees/' + id,
             method: 'get',
             success: function (response) {
-                console.log(response);
                 $('#deleteName').val(response.Name)
                 $('#deleteEmail').val(response.Email)
                 $('#deleteSalary').val(response.Salary)
+                $('#idToDelete').val(response.Id)
             },
             error: function (error) {
                 console.log(error);

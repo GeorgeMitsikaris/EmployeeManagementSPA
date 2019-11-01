@@ -51,7 +51,7 @@ namespace EmployeeManagementSPA.ApiControllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public IHttpActionResult UpdateEmployee(int id, Employee employee)
+        public IHttpActionResult UpdateEmployee(int id, [FromBody]Employee employee)
         {
             var employeeFromDb = db.Employees.Find(id);
             if (employeeFromDb != null)
