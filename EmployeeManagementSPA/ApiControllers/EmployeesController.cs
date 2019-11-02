@@ -32,6 +32,23 @@ namespace EmployeeManagementSPA.ApiControllers
                 return NotFound();
         }
 
+        [HttpGet]
+        [Route("sortByName")]
+        public IHttpActionResult SortByName([FromUri]string sort)
+        {
+            var employees = db.Employees.ToList();
+            if (sort == "asc")
+                employees = employees.OrderBy(e => e.Name).ToList();
+            else if (sort == "desc")
+                employees = employees.OrderByDescending(e => e.Name).ToList();
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "Invalid sort data");
+            }
+
+            return Ok(employees);
+        }
+
         [HttpPost]
         [Route("")]
         public IHttpActionResult CreateEmployee(Employee employee)
@@ -40,7 +57,7 @@ namespace EmployeeManagementSPA.ApiControllers
             {
                 db.Employees.Add(employee);
                 db.SaveChanges();
-                return Ok(employee);
+                return Content(HttpStatusCode.Created, employee);
             }
             else
             {

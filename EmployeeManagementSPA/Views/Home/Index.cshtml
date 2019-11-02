@@ -6,7 +6,7 @@
     <div class="row">
         <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
     </div>
-    <div class="row offset-2 col-sm-8">
+    <div class="row col-sm-12">
         <div class="text-left display-4 m-auto">Employees</div>
         <table id="tblEmployees" class="table table-striped text-center mt-3">
             <thead>
@@ -16,21 +16,23 @@
                             <p class="pr-3 d-inline">Name</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
                         </button>
                         <div class="input-group-append">
-                            <input id="txtSearchName" type="text" class="form-control" placeholder="Search Name" style="border-bottom-right-radius:0; border-top-right-radius:0" />
+                            <input id="txtSearchName" type="text" class="form-control" placeholder="Search" style="border-bottom-right-radius:0; border-top-right-radius:0" />
                             <button id="searchName" class="fa fa-search btn btn-light"></button>
                         </div>
                     </td>
                     <td class="font-weight-bold">
-                        <button id="sortByEmail" class="btn btn-block btn-warning mr-3"><p class="pr-3 d-inline">Email</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span></button>
+                        <button id="sortByEmail" class="btn btn-block btn-warning mr-3">
+                            <p class="pr-3 d-inline">Email</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
+                        </button>
                         <div class="input-group-append">
-                            <input id="txtSearchEmail" type="text" class="form-control" placeholder="Search Email" style="border-bottom-right-radius:0; border-top-right-radius:0" />
+                            <input id="txtSearchEmail" type="text" class="form-control" placeholder="Search" style="border-bottom-right-radius:0; border-top-right-radius:0" />
                             <button id="searchEmail" class="fa fa-search btn btn-light"></button>
                         </div>
                     </td>
                     <td class="font-weight-bold">
                         <button id="sortBySalary" class="btn btn-block btn-warning mr-3"><p class="pr-3 d-inline">Salary</p><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span></button>
                         <div class="input-group-append">
-                            <input id="txtSearchSalary" type="text" class="form-control" placeholder="Search Salary" style="border-bottom-right-radius:0; border-top-right-radius:0" />
+                            <input id="txtSearchSalary" type="text" class="form-control" placeholder="Search" style="border-bottom-right-radius:0; border-top-right-radius:0" />
                             <button id="searchSalary" class="fa fa-search btn btn-light"></button>
                         </div>
                     </td>
@@ -176,7 +178,7 @@
             $.ajax({
                 url: '/employees/' + id,
                 method: 'put',
-                 //Using concise ES6 syntax
+                //Using concise ES6 syntax
                 data: { Name, Email, Salary },
                 success: function () {
                     getEmployees();
@@ -187,7 +189,7 @@
             })
         })
 
-        //Ajax call to delet the Employee
+        //Ajax call to delete the Employee
         $('#btnDeleteItem').click(function () {
             const id = $('#idToDelete').val();
             console.log(id);
@@ -202,7 +204,45 @@
                 }
             })
         })
+
+        //Declaration of the sorting variables
+        let sortName = 'asc';
+
+
+        //Ajax call to sort by name
+        $('#sortByName').click(function () {
+            $.ajax({
+                url: `/employees/sortByName?sort=${sortName}`,
+                method: 'get',
+                success: function (response) {
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        $('#tblEmployees').append(`
+                            <tr>
+                                <td>${val.Name}</td>
+                                <td>${val.Email}</td>
+                                <td>${val.Salary}</td>
+                                <td>
+                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
+                                </td>
+                            </tr>`
+                        )
+                    })
+                    if (sortName === 'asc')
+                        sortName = 'desc';
+                    else
+                        sortName = 'asc';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        })
     })
+
 
     //Functions
 
