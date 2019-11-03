@@ -207,6 +207,8 @@
 
         //Declaration of the sorting variables
         let sortName = 'asc';
+        let sortEmail = 'asc';
+        let sortSalary = 'asc';
 
 
         //Ajax call to sort by name
@@ -235,6 +237,74 @@
                         sortName = 'desc';
                     else
                         sortName = 'asc';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        })
+
+
+        //Ajax call to sort by email
+        $('#sortByEmail').click(function () {
+            $.ajax({
+                url: `/employees/sortByEmail?sort=${sortEmail}`,
+                method: 'get',
+                success: function (response) {
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        $('#tblEmployees').append(`
+                            <tr>
+                                <td>${val.Name}</td>
+                                <td>${val.Email}</td>
+                                <td>${val.Salary}</td>
+                                <td>
+                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
+                                </td>
+                            </tr>`
+                        )
+                    })
+                    if (sortEmail === 'asc')
+                        sortEmail = 'desc';
+                    else
+                        sortEmail = 'asc';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        })
+
+
+        //Ajax call to sort by salary
+        $('#sortBySalary').click(function () {
+            $.ajax({
+                url: `/employees/sortBySalary?sort=${sortSalary}`,
+                method: 'get',
+                success: function (response) {
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        $('#tblEmployees').append(`
+                            <tr>
+                                <td>${val.Name}</td>
+                                <td>${val.Email}</td>
+                                <td>${val.Salary}</td>
+                                <td>
+                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
+                                </td>
+                            </tr>`
+                        )
+                    })
+                    if (sortSalary === 'asc')
+                        sortSalary = 'desc';
+                    else
+                        sortSalary = 'asc';
                 },
                 error: function (error) {
                     console.log(error);

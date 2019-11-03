@@ -49,6 +49,40 @@ namespace EmployeeManagementSPA.ApiControllers
             return Ok(employees);
         }
 
+        [HttpGet]
+        [Route("sortByEmail")]
+        public IHttpActionResult SortByEmail([FromUri]string sort)
+        {
+            var employees = db.Employees.ToList();
+            if (sort == "asc")
+                employees = employees.OrderBy(e => e.Email).ToList();
+            else if (sort == "desc")
+                employees = employees.OrderByDescending(e => e.Email).ToList();
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "Invalid sort data");
+            }
+
+            return Ok(employees);
+        }
+
+        [HttpGet]
+        [Route("sortBySalary")]
+        public IHttpActionResult SortBySalary([FromUri]string sort)
+        {
+            var employees = db.Employees.ToList();
+            if (sort == "asc")
+                employees = employees.OrderBy(e => e.Salary).ToList();
+            else if (sort == "desc")
+                employees = employees.OrderByDescending(e => e.Salary).ToList();
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "Invalid sort data");
+            }
+
+            return Ok(employees);
+        }
+
         [HttpPost]
         [Route("")]
         public IHttpActionResult CreateEmployee(Employee employee)
