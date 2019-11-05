@@ -117,7 +117,7 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <input id="idToEdit" type="hidden" />
+                    <input id="editId" type="hidden" />
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="editName" class="form-control" />
@@ -150,7 +150,7 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <input id="idToDelete" type="hidden" />
+                    <input id="deleteId" type="hidden" />
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="deleteName" class="form-control" />
@@ -206,7 +206,7 @@
 
         //Ajax call to update the Employee details
         $('#btnEditItem').click(function () {
-            const id = $('#idToEdit').val();
+            const id = $('#editId').val();
             const Name = $('#editName').val();
             const Email = $('#editEmail').val();
             const Salary = $('#editSalary').val();
@@ -227,7 +227,7 @@
 
         //Ajax call to delete the Employee
         $('#btnDeleteItem').click(function () {
-            const id = $('#idToDelete').val();
+            const id = $('#deleteId').val();
             console.log(id);
             $.ajax({
                 url: '/employees/' + id,
@@ -255,24 +255,10 @@
                 success: function (response) {
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     $.each(response, (ind, val) => {
-                        $('#tblEmployees').append(`
-                            <tr>
-                                <td>${val.Name}</td>
-                                <td>${val.Email}</td>
-                                <td>${val.Salary}</td>
-                                <td>
-                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
-                                </td>
-                            </tr>`
-                        )
+                        createTable(val.Id, val.Name, val.Email, val.Salary);                       
                     })
-                    if (sortName === 'asc')
-                        sortName = 'desc';
-                    else
-                        sortName = 'asc';
+
+                    sortName === 'asc' ? sortName = 'desc': sortName = 'asc';
                 },
                 error: function (error) {
                     console.log(error);
@@ -289,24 +275,10 @@
                 success: function (response) {
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     $.each(response, (ind, val) => {
-                        $('#tblEmployees').append(`
-                            <tr>
-                                <td>${val.Name}</td>
-                                <td>${val.Email}</td>
-                                <td>${val.Salary}</td>
-                                <td>
-                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
-                                </td>
-                            </tr>`
-                        )
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
-                    if (sortEmail === 'asc')
-                        sortEmail = 'desc';
-                    else
-                        sortEmail = 'asc';
+
+                    sortEmail === 'asc' ? sortEmail = 'desc': sortEmail = 'asc';                   
                 },
                 error: function (error) {
                     console.log(error);
@@ -323,24 +295,9 @@
                 success: function (response) {
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     $.each(response, (ind, val) => {
-                        $('#tblEmployees').append(`
-                            <tr>
-                                <td>${val.Name}</td>
-                                <td>${val.Email}</td>
-                                <td>${val.Salary}</td>
-                                <td>
-                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
-                                </td>
-                            </tr>`
-                        )
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
-                    if (sortSalary === 'asc')
-                        sortSalary = 'desc';
-                    else
-                        sortSalary = 'asc';
+                    sortSalary === 'asc' ? sortSalary = 'desc': sortSalary = 'asc';
                 },
                 error: function (error) {
                     console.log(error);
@@ -364,22 +321,7 @@
             success: function (response) {
                 table.find("tr:gt(0)").remove();
                 $.each(response, (ind, val) => {
-                    $('#tblEmployees').append(`
-                            <tr>
-                                <td>${val.Name}</td>
-                                <td>${val.Email}</td>
-                                <td>${val.Salary}</td>
-                                <td>
-                                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${val.Id}">Details</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${val.Id}">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${val.Id}">Delete</button>
-                                </td>
-                            </tr>`
-                    )
+                    createTable(val.Id, val.Name, val.Email, val.Salary);
                 })
             }
         })
@@ -393,10 +335,7 @@
             url: '/employees/' + id,
             method: 'get',
             success: function (response) {
-                $('#editName').val(response.Name)
-                $('#editEmail').val(response.Email)
-                $('#editSalary').val(response.Salary)
-                $('#idToEdit').val(response.Id)
+                fillModalInputFields('edit', response)
             },
             error: function (error) {
                 console.log(error);
@@ -412,14 +351,41 @@
             url: '/employees/' + id,
             method: 'get',
             success: function (response) {
-                $('#deleteName').val(response.Name)
-                $('#deleteEmail').val(response.Email)
-                $('#deleteSalary').val(response.Salary)
-                $('#idToDelete').val(response.Id)
+                fillModalInputFields('delete', response)
             },
             error: function (error) {
                 console.log(error);
             }
         })
+    }
+
+    //Helper Functions
+    //--------------------------------------------------------
+    //This function create the table after the ajax calls for getting and sorting the employees     
+    function createTable(id, name, email, salary) {
+         $('#tblEmployees').append(`
+            <tr>
+                <td>${name}</td>
+                <td>${email}</td>
+                <td>${salary}</td>
+                <td>
+                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
+                </td>
+                <td>
+                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
+                </td>
+                <td>
+                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
+                </td>
+            </tr>`
+        )
+    }
+
+    //This function fills the modals for editing and deleting an employee
+    function fillModalInputFields(value, response) {
+        $('#'+value+'Name').val(response.Name)
+        $('#'+value+'Email').val(response.Email)
+        $('#'+value+'Salary').val(response.Salary)
+        $('#'+value+'Id').val(response.Id)
     }
 </script>
