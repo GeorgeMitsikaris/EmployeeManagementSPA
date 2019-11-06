@@ -33,6 +33,27 @@ namespace EmployeeManagementSPA.ApiControllers
         }
 
         [HttpGet]
+        public IHttpActionResult SearchByName()
+        {
+            var names = db.Employees.Select(e => e.Name);
+            return Ok(names);
+        }
+
+        [HttpGet]
+        public IHttpActionResult SearchByEmail()
+        {
+            var names = db.Employees.Select(e => e.Email);
+            return Ok(names);
+        }
+
+        [HttpGet]
+        public IHttpActionResult SearchBySalary()
+        {
+            var names = db.Employees.Select(e => e.Salary);
+            return Ok(names);
+        }
+
+        [HttpGet]
         [Route("sortByName")]
         public IHttpActionResult SortByName([FromUri]string sort)
         {

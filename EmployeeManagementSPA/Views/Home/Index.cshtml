@@ -36,7 +36,7 @@
                             <button id="searchSalary" class="fa fa-search btn btn-light"></button>
                         </div>
                     </td>
-                    <td colspan="2" class="font-weight-bold">Actions</td>
+                    <td colspan="3" class="font-weight-bold">Actions</td>
                 </tr>
             </thead>
             <tbody id="tblBody"></tbody>
@@ -54,16 +54,16 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="nameEmp">Name</label>
-                    <input type="text" disabled class="form-control" />
+                    <label for="displayName">Name</label>
+                    <input id="displayName" type="text" disabled class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="emailEmp">Email</label>
-                    <input type="text" disabled class="form-control" />
+                    <label for="displayEmail">Email</label>
+                    <input id="displayEmail" type="text" disabled class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="salaryEmp">Salary</label>
-                    <input type="text" disabled class="form-control" />
+                    <label for="displaySalary">Salary</label>
+                    <input id="displaySalary" type="text" disabled class="form-control" />
                 </div>
                 <div class="modal-footer">
                     <button id="btnDetails" class="btn btn-info" data-dismiss="modal">Create</button>
@@ -175,6 +175,10 @@
 
 <script>
     $(document).ready(function () {
+        //Declaration of the sorting variables
+        let sortName = 'asc';
+        let sortEmail = 'asc';
+        let sortSalary = 'asc';
 
         //Call the function getEmployees() which is declared below using hoisting
         getEmployees();
@@ -241,12 +245,6 @@
             })
         })
 
-        //Declaration of the sorting variables
-        let sortName = 'asc';
-        let sortEmail = 'asc';
-        let sortSalary = 'asc';
-
-
         //Ajax call to sort by name
         $('#sortByName').click(function () {
             $.ajax({
@@ -255,10 +253,10 @@
                 success: function (response) {
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     $.each(response, (ind, val) => {
-                        createTable(val.Id, val.Name, val.Email, val.Salary);                       
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
 
-                    sortName === 'asc' ? sortName = 'desc': sortName = 'asc';
+                    sortName === 'asc' ? sortName = 'desc' : sortName = 'asc';
                 },
                 error: function (error) {
                     console.log(error);
@@ -278,7 +276,7 @@
                         createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
 
-                    sortEmail === 'asc' ? sortEmail = 'desc': sortEmail = 'asc';                   
+                    sortEmail === 'asc' ? sortEmail = 'desc' : sortEmail = 'asc';
                 },
                 error: function (error) {
                     console.log(error);
@@ -297,7 +295,7 @@
                     $.each(response, (ind, val) => {
                         createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
-                    sortSalary === 'asc' ? sortSalary = 'desc': sortSalary = 'asc';
+                    sortSalary === 'asc' ? sortSalary = 'desc' : sortSalary = 'asc';
                 },
                 error: function (error) {
                     console.log(error);
@@ -359,11 +357,28 @@
         })
     }
 
+    //This function shows the details of the specific employee
+    function details(element) {
+        //Retrieves the id from the custom data-id attribute
+        const id = $(element).data('id');
+        $.ajax({
+            url: '/employees/' + id,
+            method: 'get',
+            success: function (response) {
+                fillModalInputFields('display', response);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+
+    }
+
     //Helper Functions
     //--------------------------------------------------------
-    //This function create the table after the ajax calls for getting and sorting the employees     
+    //This function create the table after the ajax calls for getting and sorting the employees
     function createTable(id, name, email, salary) {
-         $('#tblEmployees').append(`
+        $('#tblEmployees').append(`
             <tr>
                 <td>${name}</td>
                 <td>${email}</td>
@@ -383,9 +398,9 @@
 
     //This function fills the modals for editing and deleting an employee
     function fillModalInputFields(value, response) {
-        $('#'+value+'Name').val(response.Name)
-        $('#'+value+'Email').val(response.Email)
-        $('#'+value+'Salary').val(response.Salary)
-        $('#'+value+'Id').val(response.Id)
+        $('#' + value + 'Name').val(response.Name)
+        $('#' + value + 'Email').val(response.Email)
+        $('#' + value + 'Salary').val(response.Salary)
+        $('#' + value + 'Id').val(response.Id)
     }
 </script>
