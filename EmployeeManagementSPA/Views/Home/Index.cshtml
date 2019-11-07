@@ -302,6 +302,57 @@
                 }
             })
         })
+
+        $('#txtSearchName').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/employees/employeeNames?searchTerm=' + request.term,
+                    method: 'get',
+                    success: function (data) {
+                        response(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+        })
+
+        $('#txtSearchEmail').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/employees/employeeEmails?searchTerm=' + request.term,
+                    method: 'get',
+                    success: function (data) {
+                        response(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+        })
+
+        $('#txtSearchSalary').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/employees/employeeSalaries?searchTerm=' + request.term,
+                    method: 'get',
+                    success: function (data) {
+                       
+                        response(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+        })
+
+        $('#txtSearchName').change(function () {
+            const name = $(this).val();
+            console.log(name);
+        })
     })
 
 

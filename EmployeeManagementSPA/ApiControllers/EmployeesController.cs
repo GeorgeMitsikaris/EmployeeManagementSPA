@@ -33,24 +33,32 @@ namespace EmployeeManagementSPA.ApiControllers
         }
 
         [HttpGet]
-        public IHttpActionResult SearchByName()
+        [Route("employeeNames")]
+        public IHttpActionResult getEmployeesNames(string searchTerm)
         {
-            var names = db.Employees.Select(e => e.Name);
-            return Ok(names);
+            var employeeNames = db.Employees.Where(e => e.Name.Contains(searchTerm)).Select(e=>e.Name);
+            return Ok(employeeNames);
         }
 
         [HttpGet]
-        public IHttpActionResult SearchByEmail()
+        [Route("employeeEmails")]
+        public IHttpActionResult getEmployeesEmails(string searchTerm)
         {
-            var names = db.Employees.Select(e => e.Email);
-            return Ok(names);
+            var employeeEmails = db.Employees.Where(e => e.Email.Contains(searchTerm)).Select(e => e.Email);
+            return Ok(employeeEmails);
         }
 
         [HttpGet]
-        public IHttpActionResult SearchBySalary()
+        [Route("employeeSalaries")]
+        public IHttpActionResult getEmployeesSalaries(string searchTerm)
         {
-            var names = db.Employees.Select(e => e.Salary);
-            return Ok(names);
+            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString() .Contains(searchTerm)).Select(e => e.Salary);
+            List<string> empSalaries = new List<string>();
+            foreach (var salary in employeeSalaries)
+            {
+                empSalaries.Add(salary.ToString());
+            }
+            return Ok(empSalaries);
         }
 
         [HttpGet]
