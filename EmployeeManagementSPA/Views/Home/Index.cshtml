@@ -179,6 +179,10 @@
         let sortName = 'asc';
         let sortEmail = 'asc';
         let sortSalary = 'asc';
+        const searchName = $('#txtSearchName');
+        const searchEmail = $('#txtSearchEmail');
+        const searchSalary = $('#txtSearchSalary');
+        const table = $('#tblEmployees');
 
         //Call the function getEmployees() which is declared below using hoisting
         getEmployees();
@@ -188,19 +192,14 @@
             const Name = $('#name').val();
             const Email = $('#email').val();
             const Salary = $('#salary').val();
+            const Id = $('#employeeId').val();
             $.ajax({
                 url: '/employees',
                 method: 'post',
                 //Using concise ES6 syntax
                 data: { Name, Email, Salary },
                 success: function () {
-                    table.append(`
-                        <tr>
-                            <td>${Name}</td>
-                            <td>${Email}</td>
-                            <td>${Salary}</td>
-                        </tr>`
-                    )
+                    getEmployees();
                 },
                 error: function (error) {
                     console.log(error);
@@ -251,7 +250,7 @@
                 url: `/employees/sortByName?sort=${sortName}`,
                 method: 'get',
                 success: function (response) {
-                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    table.find("tr:gt(0)").remove();
                     $.each(response, (ind, val) => {
                         createTable(val.Id, val.Name, val.Email, val.Salary);
                     })
@@ -303,7 +302,8 @@
             })
         })
 
-        $('#txtSearchName').autocomplete({
+        //Fetching the names for the autocomplete
+        searchName.autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: '/employees/employeeNames?searchTerm=' + request.term,
@@ -318,7 +318,8 @@
             }
         })
 
-        $('#txtSearchEmail').autocomplete({
+        //Fetching the emails for the autocomplete
+        searchEmail.autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: '/employees/employeeEmails?searchTerm=' + request.term,
@@ -333,7 +334,8 @@
             }
         })
 
-        $('#txtSearchSalary').autocomplete({
+        //Fetching the salaries for the autocomplete
+        searchSalary.autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: '/employees/employeeSalaries?searchTerm=' + request.term,
@@ -349,9 +351,18 @@
             }
         })
 
-        $('#txtSearchName').change(function () {
+        searchName.change(function () {
             const name = $(this).val();
-            console.log(name);
+            $.ajax({
+                url: '/employees/searchByName?name=' + name,
+                method: 'get',
+                success: function (response) {
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
+                    })
+                }
+            })
         })
     })
 

@@ -34,7 +34,7 @@ namespace EmployeeManagementSPA.ApiControllers
 
         [HttpGet]
         [Route("employeeNames")]
-        public IHttpActionResult getEmployeesNames(string searchTerm)
+        public IHttpActionResult GetEmployeesNames(string searchTerm)
         {
             var employeeNames = db.Employees.Where(e => e.Name.Contains(searchTerm)).Select(e=>e.Name);
             return Ok(employeeNames);
@@ -42,7 +42,7 @@ namespace EmployeeManagementSPA.ApiControllers
 
         [HttpGet]
         [Route("employeeEmails")]
-        public IHttpActionResult getEmployeesEmails(string searchTerm)
+        public IHttpActionResult GetEmployeesEmails(string searchTerm)
         {
             var employeeEmails = db.Employees.Where(e => e.Email.Contains(searchTerm)).Select(e => e.Email);
             return Ok(employeeEmails);
@@ -50,7 +50,7 @@ namespace EmployeeManagementSPA.ApiControllers
 
         [HttpGet]
         [Route("employeeSalaries")]
-        public IHttpActionResult getEmployeesSalaries(string searchTerm)
+        public IHttpActionResult GetEmployeesSalaries(string searchTerm)
         {
             var employeeSalaries = db.Employees.Where(e => e.Salary.ToString() .Contains(searchTerm)).Select(e => e.Salary);
             List<string> empSalaries = new List<string>();
@@ -59,6 +59,15 @@ namespace EmployeeManagementSPA.ApiControllers
                 empSalaries.Add(salary.ToString());
             }
             return Ok(empSalaries);
+        }
+
+        //Returns an http response with a list of employees because two or more employees can have the same name
+        [HttpGet]
+        [Route("searchByName")]
+        public IHttpActionResult SearchEmployeesByName(string name)
+        {
+            var employees = db.Employees.Where(e => e.Name.Equals(name));
+            return Ok(employees);
         }
 
         [HttpGet]
