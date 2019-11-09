@@ -8,7 +8,7 @@
     </div>
     <div class="row col-sm-12">
         <div class="text-left display-4 m-auto">Employees</div>
-        <table id="tblEmployees" class="table table-striped text-center mt-3">
+        <table id="tblEmployees" class="table table-bordered table-hover text-center mt-3">
             <thead>
                 <tr class="table-info">
                     <td class="font-weight-bold">
@@ -315,8 +315,15 @@
                         console.log(error);
                     }
                 })
+            },
+            //The following code highlights the selected text using regular expression
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+                var expression = new RegExp("(" + this.term + ")", 'gi');
+                var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")    
+
+                 
+                return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
             }
-        })
 
         //Fetching the emails for the autocomplete
         searchEmail.autocomplete({
