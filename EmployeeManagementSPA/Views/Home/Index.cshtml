@@ -5,6 +5,7 @@
 <div class="container mt-3">
     <div class="row">
         <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
+        <button class="btn btn-primary m-auto" onclick="getEmployees()">Back to list</button>
     </div>
     <div class="row col-sm-12">
         <div class="text-left display-4 m-auto">Employees</div>
@@ -318,12 +319,12 @@
             },
             //The following code highlights the selected text using regular expression
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
-                var expression = new RegExp("(" + this.term + ")", 'gi');
-                var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")    
+            var expression = new RegExp("(" + this.term + ")", 'gi');
+            var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")
 
-                 
-                return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
-            }
+
+            return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
+        }
 
         //Fetching the emails for the autocomplete
         searchEmail.autocomplete({
@@ -338,8 +339,15 @@
                         console.log(error);
                     }
                 })
-            }
-        })
+            },
+            //The following code highlights the selected text using regular expression
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            var expression = new RegExp("(" + this.term + ")", 'gi');
+            var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")
+
+
+            return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
+        }
 
         //Fetching the salaries for the autocomplete
         searchSalary.autocomplete({
@@ -348,20 +356,55 @@
                     url: '/employees/employeeSalaries?searchTerm=' + request.term,
                     method: 'get',
                     success: function (data) {
-                       
                         response(data);
                     },
                     error: function (error) {
                         console.log(error);
                     }
                 })
-            }
-        })
+            },
+            //The following code highlights the selected text using regular expression
+        }).data('ui-autocomplete')._renderItem = function (ul, item) {
+            var expression = new RegExp("(" + this.term + ")", 'gi');
+            var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")
+
+
+            return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
+        }
 
         searchName.change(function () {
             const name = $(this).val();
             $.ajax({
                 url: '/employees/searchByName?name=' + name,
+                method: 'get',
+                success: function (response) {
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
+                    })
+                }
+            })
+        })
+
+        searchEmail.change(function () {
+            const email = $(this).val();
+            $.ajax({
+                url: '/employees/searchByEmail?email=' + email,
+                method: 'get',
+                success: function (response) {
+                    console.log(response);
+                    $('#tblEmployees').find("tr:gt(0)").remove();
+                    $.each(response, (ind, val) => {
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
+                    })
+                }
+            })
+        })
+
+        searchSalary.change(function () {
+            const salary = $(this).val();
+            $.ajax({
+                url: '/employees/searchBySalary?salary=' + salary,
                 method: 'get',
                 success: function (response) {
                     $('#tblEmployees').find("tr:gt(0)").remove();

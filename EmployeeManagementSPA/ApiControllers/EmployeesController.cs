@@ -36,7 +36,7 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("employeeNames")]
         public IHttpActionResult GetEmployeesNames(string searchTerm)
         {
-            var employeeNames = db.Employees.Where(e => e.Name.Contains(searchTerm)).Select(e=>e.Name);
+            var employeeNames = db.Employees.Where(e => e.Name.Contains(searchTerm)).Select(e => e.Name);
             return Ok(employeeNames);
         }
 
@@ -52,7 +52,7 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("employeeSalaries")]
         public IHttpActionResult GetEmployeesSalaries(string searchTerm)
         {
-            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString() .Contains(searchTerm)).Select(e => e.Salary);
+            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString().Contains(searchTerm)).Select(e => e.Salary);
             List<string> empSalaries = new List<string>();
             foreach (var salary in employeeSalaries)
             {
@@ -68,6 +68,31 @@ namespace EmployeeManagementSPA.ApiControllers
         {
             var employees = db.Employees.Where(e => e.Name.Equals(name));
             return Ok(employees);
+        }
+
+        //Returns an http response with a list of employees because ajax function expects an array of employees to create the table
+        [HttpGet]
+        [Route("searchByEmail")]
+        public IHttpActionResult SearchEmployeesByEmail(string email)
+        {
+            var employees = db.Employees.Where(e => e.Email.Equals(email));
+            return Ok(employees);
+        }
+
+        //Returns an http response with a list of employees because two or more employees can have the same name
+        [HttpGet]
+        [Route("searchBySalary")]
+        public IHttpActionResult SearchEmployeesBySalary(string salary)
+        {
+            decimal salaryDecimal = 0;
+            if (decimal.TryParse(salary, out salaryDecimal)){
+                var employees = db.Employees.Where(e => e.Salary.Equals(salaryDecimal));
+                return Ok(employees);
+            }
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, salary);
+            }
         }
 
         [HttpGet]
