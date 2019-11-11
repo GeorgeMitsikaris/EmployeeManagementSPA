@@ -317,6 +317,34 @@
                     }
                 })
             },
+            // Fetching the employee(s) by the selected name
+            //select: function () {
+            //    const name = $(this).val();
+            //    $.ajax({
+            //        url: '/employees/searchByName?name=' + name,
+            //        method: 'get',
+            //        success: function (response) {
+            //            $('#tblEmployees').find("tr:gt(0)").remove();
+            //            $.each(response, (ind, val) => {
+            //                createTable(val.Id, val.Name, val.Email, val.Salary);
+            //            })
+            //        }
+            //    })
+            //},
+            // Fetching the employee(s) by the selected name
+            close: function () {
+                const name = $(this).val();
+                $.ajax({
+                    url: '/employees/searchByName?name=' + name,
+                    method: 'get',
+                    success: function (response) {
+                        $('#tblEmployees').find("tr:gt(0)").remove();
+                        $.each(response, (ind, val) => {
+                            createTable(val.Id, val.Name, val.Email, val.Salary);
+                        })
+                    }
+                })
+            }
             //The following code highlights the selected text using regular expression
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
             var expression = new RegExp("(" + this.term + ")", 'gi');
@@ -340,6 +368,21 @@
                     }
                 })
             },
+            // Fetching the employee by the selected email
+            close: function () {
+                const email = $(this).val();
+                $.ajax({
+                    url: '/employees/searchByEmail?email=' + email,
+                    method: 'get',
+                    success: function (response) {
+                        console.log(response);
+                        $('#tblEmployees').find("tr:gt(0)").remove();
+                        $.each(response, (ind, val) => {
+                            createTable(val.Id, val.Name, val.Email, val.Salary);
+                        })
+                    }
+                })
+            }
             //The following code highlights the selected text using regular expression
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
             var expression = new RegExp("(" + this.term + ")", 'gi');
@@ -363,6 +406,20 @@
                     }
                 })
             },
+            // Fetching the employee(s) by the selected salary
+            close: function () {
+                const salary = $(this).val();
+                $.ajax({
+                    url: '/employees/searchBySalary?salary=' + salary,
+                    method: 'get',
+                    success: function (response) {
+                        $('#tblEmployees').find("tr:gt(0)").remove();
+                        $.each(response, (ind, val) => {
+                            createTable(val.Id, val.Name, val.Email, val.Salary);
+                        })
+                    }
+                })
+            }
             //The following code highlights the selected text using regular expression
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
             var expression = new RegExp("(" + this.term + ")", 'gi');
@@ -372,6 +429,7 @@
             return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
         }
 
+        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole name pressing enter or tab
         searchName.change(function () {
             const name = $(this).val();
             $.ajax({
@@ -386,6 +444,7 @@
             })
         })
 
+        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole email pressing enter or tab
         searchEmail.change(function () {
             const email = $(this).val();
             $.ajax({
@@ -401,6 +460,7 @@
             })
         })
 
+        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole salary pressing enter or tab
         searchSalary.change(function () {
             const salary = $(this).val();
             $.ajax({
