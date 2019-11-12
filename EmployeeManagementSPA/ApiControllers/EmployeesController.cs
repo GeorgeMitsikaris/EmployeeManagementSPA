@@ -146,6 +146,17 @@ namespace EmployeeManagementSPA.ApiControllers
             return Ok(employees);
         }
 
+        [HttpGet]
+        [Route("paging")]
+        public IHttpActionResult Paging(int pageNumber, int numberOfRowsPerPage)
+        {
+            var employees = db.Employees.ToList();
+            //int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(employees.Count) / Convert.ToDouble(numberOfRowsPerPage)));
+            int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
+            employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
+            return Ok(employees);
+        }
+
         [HttpPost]
         [Route("")]
         public IHttpActionResult CreateEmployee(Employee employee)

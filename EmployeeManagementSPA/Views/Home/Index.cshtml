@@ -42,6 +42,7 @@
             </thead>
             <tbody id="tblBody"></tbody>
         </table>
+        <ul id="paginationUl" class="pagination justify-content-center mx-auto"></ul>
     </div>
 </div>
 
@@ -187,7 +188,6 @@
 
         //Call the function getEmployees() which is declared below using hoisting
         getEmployees();
-
         //Ajax call to create a new employee
         $('#btnInsert').click(function () {
             const Name = $('#name').val();
@@ -317,20 +317,6 @@
                     }
                 })
             },
-            // Fetching the employee(s) by the selected name
-            //select: function () {
-            //    const name = $(this).val();
-            //    $.ajax({
-            //        url: '/employees/searchByName?name=' + name,
-            //        method: 'get',
-            //        success: function (response) {
-            //            $('#tblEmployees').find("tr:gt(0)").remove();
-            //            $.each(response, (ind, val) => {
-            //                createTable(val.Id, val.Name, val.Email, val.Salary);
-            //            })
-            //        }
-            //    })
-            //},
             // Fetching the employee(s) by the selected name
             close: function () {
                 const name = $(this).val();
@@ -490,6 +476,12 @@
             method: 'get',
             success: function (response) {
                 table.find("tr:gt(0)").remove();
+                const totalRows = response.length;
+                    for (var i = 0; i < totalRows; i++) {
+                        $(`<li class="page-item">
+                            <a href="/employees/pagination?pageNumber=${i}&numberOfRowsPerPage=5" class="page-link">${i + 1}</a>
+                        </li>`).appendTo('#paginationUl');
+                    }
                 $.each(response, (ind, val) => {
                     createTable(val.Id, val.Name, val.Email, val.Salary);
                 })
