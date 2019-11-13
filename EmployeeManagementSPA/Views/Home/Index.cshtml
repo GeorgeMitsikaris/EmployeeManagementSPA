@@ -187,7 +187,7 @@
         const table = $('#tblEmployees');
 
         //Call the function getEmployees() which is declared below using hoisting
-        getEmployees();
+        getEmployees(1,3);
         //Ajax call to create a new employee
         $('#btnInsert').click(function () {
             const Name = $('#name').val();
@@ -468,23 +468,51 @@
     // Ajax call to get all employees
     // The edit and delete buttons are created dynamically
     // They trigger the respective modal passing the Id through the data-id attribute
-    function getEmployees() {
+    function getEmployees(pageNumber, rowsPerPage) {
         const table = $('#tblEmployees')
-
+        let totalRows = 0;
         $.ajax({
             url: '/employees',
             method: 'get',
             success: function (response) {
-                table.find("tr:gt(0)").remove();
-                const totalRows = response.length;
-                    for (var i = 0; i < totalRows; i++) {
+                totalRows = response.length
+            }
+        }).done(() => {
+            $.ajax({
+                url: `/employees/pagination?pageNumber=${pageNumber}&numberOfRowsPerPage=${rowsPerPage}`,
+                method: 'get',
+                success: function (response) {
+                    table.find("tr:gt(0)").remove();
+                    console.log("Page number1: "+pageNumber);
+                    console.log("Number of rows per page1: " +rowsPerPage);
+                    const numberOfPages = Math.ceil(totalRows / rowsPerPage);
+                    $('#paginationUl').empty();
+                    for (var i = 0; i < numberOfPages; i++) {
                         $(`<li class="page-item">
-                            <a href="/employees/pagination?pageNumber=${i}&numberOfRowsPerPage=5" class="page-link">${i + 1}</a>
+                        <button data-page="${i}" data-rows="${rowsPerPage}" onclick="pagination(this)" class="page-link">${i + 1}</button>
                         </li>`).appendTo('#paginationUl');
                     }
-                $.each(response, (ind, val) => {
-                    createTable(val.Id, val.Name, val.Email, val.Salary);
-                })
+                    $.each(response, (ind, val) => {
+                        createTable(val.Id, val.Name, val.Email, val.Salary);
+                    })
+                }
+            })
+        })
+    }
+
+    function pagination(element) {
+        const pageNumber = $(element).data('page');
+        const numberOfRowsPerPage = $(element).data('rows');
+        $.ajax({
+            url: `/employees/pagination?pageNumber=${pageNumber}&numberOfRowsPerPage=${numberOfRowsPerPage}`,
+            method: 'get',
+            success: function () {
+                console.log("Page number2: "+pageNumber);
+                console.log("Number of rows per page2: " +numberOfRowsPerPage);
+                getEmployees(pageNumber, numberOfRowsPerPage)
+            },
+            error: function (error) {
+                console.log(error);
             }
         })
     }
@@ -543,20 +571,20 @@
     //This function create the table after the ajax calls for getting and sorting the employees
     function createTable(id, name, email, salary) {
         $('#tblEmployees').append(`
-            <tr>
-                <td>${name}</td>
-                <td>${email}</td>
-                <td>${salary}</td>
-                <td>
-                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
-                </td>
-                <td>
-                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
-                </td>
-                <td>
-                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
-                </td>
-            </tr>`
+        <tr>
+            <td>${name}</td>
+            <td>${email}</td>
+            <td>${salary}</td>
+            <td>
+                <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
+            </td>
+            <td>
+                <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
+            </td>
+            <td>
+                <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
+            </td>
+        </tr>`
         )
     }
 

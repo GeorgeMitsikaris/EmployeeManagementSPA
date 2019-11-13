@@ -85,7 +85,8 @@ namespace EmployeeManagementSPA.ApiControllers
         public IHttpActionResult SearchEmployeesBySalary(string salary)
         {
             decimal salaryDecimal = 0;
-            if (decimal.TryParse(salary, out salaryDecimal)){
+            if (decimal.TryParse(salary, out salaryDecimal))
+            {
                 var employees = db.Employees.Where(e => e.Salary.Equals(salaryDecimal));
                 return Ok(employees);
             }
@@ -147,11 +148,10 @@ namespace EmployeeManagementSPA.ApiControllers
         }
 
         [HttpGet]
-        [Route("paging")]
+        [Route("pagination")]
         public IHttpActionResult Paging(int pageNumber, int numberOfRowsPerPage)
         {
             var employees = db.Employees.ToList();
-            //int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(employees.Count) / Convert.ToDouble(numberOfRowsPerPage)));
             int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
             employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
             return Ok(employees);
