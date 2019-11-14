@@ -13,6 +13,8 @@ namespace EmployeeManagementSPA.ApiControllers
     {
         ApplicationDbContext db = new ApplicationDbContext();
 
+        //Is used for getting the total rows of the table for paging
+        //The presentation of employees is done by the Paging method
         [HttpGet]
         [Route("")]
         public IHttpActionResult GetEmployees()

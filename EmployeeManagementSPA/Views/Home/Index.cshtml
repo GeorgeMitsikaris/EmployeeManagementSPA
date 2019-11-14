@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Employee Index";
+    ViewBag.Title = "A Simple Single Page Application";
 }
 
 <div class="container mt-3">
@@ -177,7 +177,7 @@
 
 <script>
     $(document).ready(function () {
-        //Declaration of the sorting variables
+        //Declaration of variables
         let sortName = 'asc';
         let sortEmail = 'asc';
         let sortSalary = 'asc';
@@ -187,13 +187,12 @@
         const table = $('#tblEmployees');
 
         //Call the function getEmployees() which is declared below using hoisting
-        getEmployees(1,3);
+        getEmployees(1,5);
         //Ajax call to create a new employee
         $('#btnInsert').click(function () {
             const Name = $('#name').val();
             const Email = $('#email').val();
             const Salary = $('#salary').val();
-            const Id = $('#employeeId').val();
             $.ajax({
                 url: '/employees',
                 method: 'post',
@@ -324,6 +323,7 @@
                     url: '/employees/searchByName?name=' + name,
                     method: 'get',
                     success: function (response) {
+                        searchName.val('');
                         $('#tblEmployees').find("tr:gt(0)").remove();
                         $.each(response, (ind, val) => {
                             createTable(val.Id, val.Name, val.Email, val.Salary);
@@ -361,7 +361,7 @@
                     url: '/employees/searchByEmail?email=' + email,
                     method: 'get',
                     success: function (response) {
-                        console.log(response);
+                        searchEmail.val('');
                         $('#tblEmployees').find("tr:gt(0)").remove();
                         $.each(response, (ind, val) => {
                             createTable(val.Id, val.Name, val.Email, val.Salary);
@@ -399,6 +399,7 @@
                     url: '/employees/searchBySalary?salary=' + salary,
                     method: 'get',
                     success: function (response) {
+                        searchSalary.val('');
                         $('#tblEmployees').find("tr:gt(0)").remove();
                         $.each(response, (ind, val) => {
                             createTable(val.Id, val.Name, val.Email, val.Salary);
@@ -477,29 +478,30 @@
             success: function (response) {
                 totalRows = response.length
             }
+            //We need the total number of rows in order to do the pagination
+            //'done()' guarantees that the code will execute after the completion of the previous ajax call
         }).done(() => {
             $.ajax({
                 url: `/employees/pagination?pageNumber=${pageNumber}&numberOfRowsPerPage=${rowsPerPage}`,
                 method: 'get',
                 success: function (response) {
                     table.find("tr:gt(0)").remove();
-                    console.log("Page number1: "+pageNumber);
-                    console.log("Number of rows per page1: " +rowsPerPage);
                     const numberOfPages = Math.ceil(totalRows / rowsPerPage);
                     $('#paginationUl').empty();
                     for (var i = 0; i < numberOfPages; i++) {
                         $(`<li class="page-item">
-                        <button data-page="${i}" data-rows="${rowsPerPage}" onclick="pagination(this)" class="page-link">${i + 1}</button>
+                            <button data-page="${i + 1}" data-rows="${rowsPerPage}" onclick="pagination(this)" class="page-link">${i + 1}</button>
                         </li>`).appendTo('#paginationUl');
                     }
                     $.each(response, (ind, val) => {
-                        createTable(val.Id, val.Name, val.Email, val.Salary);
+                        createTable(val.Id, val.Name, val.Email, val.Salary.toFixed(2));
                     })
                 }
             })
         })
     }
 
+    //Is triggered when a pagination button is clicked and does the pagination
     function pagination(element) {
         const pageNumber = $(element).data('page');
         const numberOfRowsPerPage = $(element).data('rows');
@@ -507,8 +509,6 @@
             url: `/employees/pagination?pageNumber=${pageNumber}&numberOfRowsPerPage=${numberOfRowsPerPage}`,
             method: 'get',
             success: function () {
-                console.log("Page number2: "+pageNumber);
-                console.log("Number of rows per page2: " +numberOfRowsPerPage);
                 getEmployees(pageNumber, numberOfRowsPerPage)
             },
             error: function (error) {
@@ -517,7 +517,7 @@
         })
     }
 
-    //This function finds the employee to be edited and fills the fields of the modal with their respective values
+    //Finds the employee to be edited and fills the fields of the modal with their respective values
     function editItem(element) {
         //Retrieves the id from the custom data-id attribute
         const id = $(element).data('id');
@@ -533,7 +533,7 @@
         })
     }
 
-    //This function finds the employee to be deleted and fills the fields of the modal with their respective values
+    //Finds the employee to be deleted and fills the fields of the modal with their respective values
     function deleteItem(element) {
         //Retrieves the id from the custom data-id attribute
         const id = $(element).data('id');
@@ -549,7 +549,7 @@
         })
     }
 
-    //This function shows the details of the specific employee
+    //Shows the details of the specific employee
     function details(element) {
         //Retrieves the id from the custom data-id attribute
         const id = $(element).data('id');
@@ -568,7 +568,7 @@
 
     //Helper Functions
     //--------------------------------------------------------
-    //This function create the table after the ajax calls for getting and sorting the employees
+    //Creates the table after the ajax calls for getting and sorting the employees
     function createTable(id, name, email, salary) {
         $('#tblEmployees').append(`
         <tr>
@@ -588,7 +588,7 @@
         )
     }
 
-    //This function fills the modals for editing and deleting an employee
+    //Fills the modals for editing and deleting an employee
     function fillModalInputFields(value, response) {
         $('#' + value + 'Name').val(response.Name)
         $('#' + value + 'Email').val(response.Email)
