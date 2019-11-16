@@ -100,7 +100,7 @@ namespace EmployeeManagementSPA.ApiControllers
 
         [HttpGet]
         [Route("sortByName")]
-        public IHttpActionResult SortByName([FromUri]string sort)
+        public IHttpActionResult SortByName(string sort, int pageNumber, int numberOfRowsPerPage)
         {
             var employees = db.Employees.ToList();
             if (sort == "asc")
@@ -112,12 +112,15 @@ namespace EmployeeManagementSPA.ApiControllers
                 return Content(HttpStatusCode.BadRequest, "Invalid sort data");
             }
 
+            int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
+            employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
+
             return Ok(employees);
         }
 
         [HttpGet]
         [Route("sortByEmail")]
-        public IHttpActionResult SortByEmail([FromUri]string sort)
+        public IHttpActionResult SortByEmail(string sort, int pageNumber, int numberOfRowsPerPage)
         {
             var employees = db.Employees.ToList();
             if (sort == "asc")
@@ -129,12 +132,15 @@ namespace EmployeeManagementSPA.ApiControllers
                 return Content(HttpStatusCode.BadRequest, "Invalid sort data");
             }
 
+            int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
+            employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
+
             return Ok(employees);
         }
 
         [HttpGet]
         [Route("sortBySalary")]
-        public IHttpActionResult SortBySalary([FromUri]string sort)
+        public IHttpActionResult SortBySalary(string sort, int pageNumber, int numberOfRowsPerPage)
         {
             var employees = db.Employees.ToList();
             if (sort == "asc")
@@ -145,6 +151,9 @@ namespace EmployeeManagementSPA.ApiControllers
             {
                 return Content(HttpStatusCode.BadRequest, "Invalid sort data");
             }
+
+            int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
+            employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
 
             return Ok(employees);
         }
