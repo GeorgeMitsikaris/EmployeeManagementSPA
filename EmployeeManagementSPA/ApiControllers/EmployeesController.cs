@@ -158,15 +158,15 @@ namespace EmployeeManagementSPA.ApiControllers
             return Ok(employees);
         }
 
-        [HttpGet]
-        [Route("pagination")]
-        public IHttpActionResult Paging(int pageNumber, int numberOfRowsPerPage)
-        {
-            var employees = db.Employees.ToList();
-            int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
-            employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
-            return Ok(employees);
-        }
+        //[HttpGet]
+        //[Route("pagination")]
+        //public IHttpActionResult Paging(int pageNumber, int numberOfRowsPerPage)
+        //{
+        //    var employees = db.Employees.ToList();
+        //    int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
+        //    employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
+        //    return Ok(employees);
+        //}
 
         [HttpPost]
         [Route("")]
