@@ -43,6 +43,12 @@
             </thead>
             <tbody id="tblBody"></tbody>
         </table>
+        <div class="row clearfix">
+            <div class="form-group d-block">
+                <label for="numberOfRows">Enter the number of rows per page</label>
+                <input type="number" value="5" id="numberOfRows" class="form-control" />
+            </div>
+        </div>
         <ul id="paginationUl" class="pagination justify-content-center mx-auto"></ul>
     </div>
 </div>
@@ -188,25 +194,25 @@
 </div>
 
 <script>
-    let pageNumber = 1;
-    let rowsPerPage = 5;
     //let sortingByWhat = 'name';
-    let sortName = 'asc';
-    let sortEmail = 'asc';
-    let sortSalary = 'asc';
+    let sortNameDirection = 'asc';
+    let pageNumber = 1;
+    let rowsPerPage = $('#numberOfRows');
+    let sortEmailDirection = 'asc';
+    let sortSalaryDirection = 'asc';
     $(document).ready(function () {
         //Declaration of variables
         const searchName = $('#txtSearchName');
         const searchEmail = $('#txtSearchEmail');
         const searchSalary = $('#txtSearchSalary');
-        const table = $('#tblEmployees');
+        //const table = $('#tblEmployees');
         const dialogInsert = $('#dialogInsert').dialog({ autoOpen: false })
         const dialogEdit = $('#dialogEdit').dialog({ autoOpen: false })
         const dialogDelete = $('#dialogDelete').dialog({ autoOpen: false })
         const dialogError = $('#dialogError').dialog({ autoOpen: false })
 
         //Call the function getEmployees() which is declared below using hoisting
-        getEmployees('Name', 'asc', 1, 5);
+        getEmployees('Name', 'asc', 1, rowsPerPage.val());
         //Ajax call to create a new employee
         $('#btnInsert').click(function () {
             const Name = $('#name').val();
@@ -268,24 +274,28 @@
             })
         })
 
-        //Ajax call to sort by name
+        rowsPerPage.change(function () {
+            getEmployees('Name', 'asc', 1, $(this).val())
+        })
+
+
+        //Sorts the employees by name
         $('#sortByName').click(function () {
-            getEmployees('Name', sortName, pageNumber, rowsPerPage);
-            sortName === 'asc' ? sortName = 'desc' : sortName = 'asc';
+            getEmployees('Name', sortNameDirection, pageNumber, rowsPerPage.val());
+            sortNameDirection === 'asc' ? sortNameDirection = 'desc' : sortNameDirection = 'asc';
         })
 
-
-        //Ajax call to sort by email
+        //Sorts the employeesby email
         $('#sortByEmail').click(function () {
-            getEmployees('Email', sortEmail, pageNumber, rowsPerPage);
-            sortEmail === 'asc' ? sortEmail = 'desc' : sortEmail = 'asc';
+            getEmployees('Email', sortEmailDirection, pageNumber, rowsPerPage.val());
+            sortEmailDirection === 'asc' ? sortEmailDirection = 'desc' : sortEmailDirection = 'asc';
         })
 
 
-        //Ajax call to sort by salary
+        //Sorts the employeesby salary
         $('#sortBySalary').click(function () {
-            getEmployees('Salary', sortSalary, pageNumber, rowsPerPage);
-            sortSalary === 'asc' ? sortSalary = 'desc' : sortSalary = 'asc';
+            getEmployees('Salary', sortSalaryDirection, pageNumber, rowsPerPage.val());
+            sortSalaryDirection === 'asc' ? sortSalaryDirection = 'desc' : sortSalaryDirection = 'asc';
         })
 
         //Fetching the names for the autocomplete
@@ -470,8 +480,8 @@
 
     //Functions-----------------------------------------------------------------------------------------
 
-    // Ajax call to get all employees
-    // The edit and delete buttons are created dynamically
+    // Ajax call to get the total number of employees to use it for pagination
+    // The edit and delete buttons are created dynamically with the createTable() function
     // They trigger the respective modal passing the Id through the data-id attribute
     function getEmployees(sortingByWhat, sortDirection, pageNumber, rowsPerPage) {
         const table = $('#tblEmployees')
@@ -510,14 +520,14 @@
         })
     }
 
-    function sorting(response) {
-        $('#tblEmployees').find("tr:gt(0)").remove();
-        $.each(response, (ind, val) => {
-            createTable(val.Id, val.Name, val.Email, val.Salary);
-        })
-        sortSalary === 'asc' ? sortSalary = 'desc' : sortSalary = 'asc';
-        sortingByWhat = 'Salary'
-    }
+    //function sorting(response) {
+    //    $('#tblEmployees').find("tr:gt(0)").remove();
+    //    $.each(response, (ind, val) => {
+    //        createTable(val.Id, val.Name, val.Email, val.Salary);
+    //    })
+    //    sortSalaryDirection === 'asc' ? sortSalaryDirection = 'desc' : sortSalaryDirection = 'asc';
+    //    sortingByWhat = 'Salary'
+    //}
 
     //Is triggered when a pagination button is clicked and does the pagination
     function pagination(element) {
@@ -525,17 +535,8 @@
         const numberOfRowsPerPage = $(element).data('rows');
         const sortDirection = $(element).data('sortdirection');
         const sortByWhat = $(element).data('sortbywhat');
-                getEmployees(sortByWhat, sortDirection, pageNumber, numberOfRowsPerPage)
-        //$.ajax({
-        //    url: `/employees/pagination?pageNumber=${pageNumber}&numberOfRowsPerPage=${numberOfRowsPerPage}`,
-        //    method: 'get',
-        //    success: function () {
-        //    },
-        //    error: function (error) {
-        //        console.log(error);
-        //        $('#dialogError').dialog();
-        //    }
-        //})
+
+        getEmployees(sortByWhat, sortDirection, pageNumber, numberOfRowsPerPage)
     }
 
     //Finds the employee to be edited and fills the fields of the modal with their respective values
