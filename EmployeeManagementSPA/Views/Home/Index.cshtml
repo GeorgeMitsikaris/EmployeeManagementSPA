@@ -5,7 +5,7 @@
 <div class="container mt-3">
     <div class="row">
         <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
-        <button class="btn btn-primary m-auto" id="backToList" >Back to list</button>
+        <button class="btn btn-primary m-auto" id="backToList" >Reset table</button>
     </div>
     <div class="row col-sm-12">
         <div class="text-left display-4 m-auto">Employees</div>
@@ -277,7 +277,8 @@
         })
 
         $('#backToList').click(function () {
-            getEmployees(sortingColumn, sortDirection, pageNumber, rowsPerPage)
+            getEmployees('Name', 'asc', 1, 5);
+            $('#numberOfRows').val('5');
         })
 
 
@@ -511,12 +512,29 @@
                     table.find("tr:gt(0)").remove();
                     const numberOfPages = Math.ceil(totalRows / rowsPerPage);
                     $('#paginationUl').empty();
-                    for (var i = 0; i < numberOfPages; i++) {
-                        $(`<li class="page-item">
-                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbywhat=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
+                    //If the user is in the first page and presses the previous button the app doesn't break and stays in the first page
+                    let prevPageNumber = pageNumber;
+                    $(`<li class="page-item">
+                        <button data-page="${prevPageNumber == 1 ? 1 : prevPageNumber - 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Prev</button>
                  </li>`).appendTo('#paginationUl');
-                        pageNumber = i + 1;
+                    for (var i = 0; i < numberOfPages; i++) {                        
+                        if (i + 1 == pageNumber) {
+                             $(`<li class="page-item active">
+                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
+                 </li>`).appendTo('#paginationUl');
+                        }
+                        else {
+                        $(`<li class="page-item">
+                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
+                 </li>`).appendTo('#paginationUl');
+
+                        }
                     }
+                    //If the user is in the last page and presses the next button the app doesn't break and stays in the last page
+                    let nextPageNumber = pageNumber;
+                    $(`<li class="page-item">
+                        <button data-page="${nextPageNumber == numberOfPages ? nextPageNumber : nextPageNumber + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Next</button>
+                 </li>`).appendTo('#paginationUl');
                     $.each(response, (ind, val) => {
                         createTable(val.Id, val.Name, val.Email, val.Salary.toFixed(2));
                     })
@@ -525,21 +543,12 @@
         })
     }
 
-    //function sorting(response) {
-    //    $('#tblEmployees').find("tr:gt(0)").remove();
-    //    $.each(response, (ind, val) => {
-    //        createTable(val.Id, val.Name, val.Email, val.Salary);
-    //    })
-    //    sortSalaryDirection === 'asc' ? sortSalaryDirection = 'desc' : sortSalaryDirection = 'asc';
-    //    sortingColumn = 'Salary'
-    //}
-
     //Is triggered when a pagination button is clicked and does the pagination
     function pagination(element) {
         pageNumber = $(element).data('page');
         rowsPerPage = $(element).data('rows');
         sortDirection = $(element).data('sortdirection');
-        sortingColumn = $(element).data('sortbywhat');
+        sortingColumn = $(element).data('sortbycolumn');
 
         getEmployees(sortingColumn, sortDirection, pageNumber, rowsPerPage)
     }
