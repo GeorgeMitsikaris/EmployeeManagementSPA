@@ -5,7 +5,7 @@
 <div class="container mt-3">
     <div class="row">
         <button class="btn btn-primary m-auto" data-toggle="modal" data-target="#insertModal">Create New</button>
-        <button class="btn btn-primary m-auto" id="backToList" >Reset table</button>
+        <button class="btn btn-primary m-auto" id="backToList">Reset table</button>
     </div>
     <div class="row col-sm-12">
         <div class="text-left display-4 m-auto">Employees</div>
@@ -42,13 +42,15 @@
             </thead>
             <tbody id="tblBody"></tbody>
         </table>
-        <div class="row clearfix">
-            <div class="form-group d-block">
-                <label for="numberOfRows">Enter the number of rows per page</label>
+        <div class="m-auto">
+            <div class="form-group">
+                <label for="numberOfRows" class="">Enter the number of rows per page</label>
                 <input type="number" value="5" id="numberOfRows" class="form-control" />
             </div>
         </div>
-        <ul id="paginationUl" class="pagination justify-content-center mx-auto"></ul>
+        <div class="m-auto">
+            <ul id="paginationUl" class="pagination"></ul>
+        </div>
     </div>
 </div>
 <div id="dialogInsert" title="Success" style="display:none">
@@ -195,7 +197,7 @@
 <script>
     let pageNumber = 1;
     let rowsPerPage = 5;
-    let sortDirection = 'asc';    
+    let sortDirection = 'asc';
     let sortingColumn = 'Name';
     $(document).ready(function () {
         //Declaration of variables
@@ -209,6 +211,7 @@
 
         //Call the function getEmployees() which is declared below using hoisting
         getEmployees(sortingColumn, sortDirection, pageNumber, rowsPerPage);
+
         //Ajax call to create a new employee
         $('#btnInsert').click(function () {
             const Name = $('#name').val();
@@ -276,11 +279,11 @@
             rowsPerPage = $(this).val();
         })
 
+        //Resets the list of employees to initial state
         $('#backToList').click(function () {
             getEmployees('Name', 'asc', 1, 5);
             $('#numberOfRows').val('5');
         })
-
 
         //Sorts the employees by name
         $('#sortByName').click(function () {
@@ -304,7 +307,7 @@
             sortingColumn = 'Salary';
         })
 
-        //Fetching the names for the autocomplete
+        //Fetching the names for the autocomplete and
         searchName.autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -338,7 +341,6 @@
         }).data('ui-autocomplete')._renderItem = function (ul, item) {
             var expression = new RegExp("(" + this.term + ")", 'gi');
             var answer = item.label.replace(expression, "<span style='color:#f00'>$1</span>")
-
 
             return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
         }
@@ -487,8 +489,6 @@
     //Functions-----------------------------------------------------------------------------------------
 
     // Ajax call to get the total number of employees to use it for pagination
-    // The edit and delete buttons are created dynamically with the createTable() function
-    // They trigger the respective modal passing the Id through the data-id attribute
     function getEmployees(sortingColumn, sortDirection, pageNumber, rowsPerPage) {
         const table = $('#tblEmployees')
         let totalRows = 0;
@@ -509,32 +509,44 @@
                 url: `/employees/sortBy${sortingColumn}?sort=${sortDirection}&pageNumber=${pageNumber}&numberOfRowsPerPage=${rowsPerPage}`,
                 method: 'get',
                 success: function (response) {
+                    //Removes the current rows from the table in order to create the new ones
                     table.find("tr:gt(0)").remove();
-                    const numberOfPages = Math.ceil(totalRows / rowsPerPage);
+
+                    //Removes the paging buttons
                     $('#paginationUl').empty();
+
+                    //Creates the previous button
                     //If the user is in the first page and presses the previous button the app doesn't break and stays in the first page
+                    const numberOfPages = Math.ceil(totalRows / rowsPerPage);
                     let prevPageNumber = pageNumber;
                     $(`<li class="page-item">
                         <button data-page="${prevPageNumber == 1 ? 1 : prevPageNumber - 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Prev</button>
                  </li>`).appendTo('#paginationUl');
-                    for (var i = 0; i < numberOfPages; i++) {                        
+
+                    //Creates the paging buttons
+                    for (var i = 0; i < numberOfPages; i++) {
+                        //Finds the current page and highlighs the respective button
                         if (i + 1 == pageNumber) {
-                             $(`<li class="page-item active">
+                            $(`<li class="page-item active">
                         <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
                  </li>`).appendTo('#paginationUl');
                         }
                         else {
-                        $(`<li class="page-item">
+                            $(`<li class="page-item">
                         <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
                  </li>`).appendTo('#paginationUl');
 
                         }
                     }
+
+                    //Creates the next button
                     //If the user is in the last page and presses the next button the app doesn't break and stays in the last page
                     let nextPageNumber = pageNumber;
                     $(`<li class="page-item">
                         <button data-page="${nextPageNumber == numberOfPages ? nextPageNumber : nextPageNumber + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Next</button>
                  </li>`).appendTo('#paginationUl');
+
+                    // The edit and delete buttons are created dynamically with the createTable() function
                     $.each(response, (ind, val) => {
                         createTable(val.Id, val.Name, val.Email, val.Salary.toFixed(2));
                     })
@@ -606,28 +618,29 @@
     }
 
     //Helper Functions
-    //--------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------
     //Creates the table after the ajax calls for getting and sorting the employees
     function createTable(id, name, email, salary) {
         $('#tblEmployees').append(`
-<tr>
-<td>${name}</td>
-<td>${email}</td>
-<td>${salary}</td>
-<td>
-<button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
-</td>
-<td>
-<button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
-</td>
-<td>
-<button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
-</td>
-</tr>`
+            <tr>
+                <td>${name}</td>
+                <td>${email}</td>
+                <td>${salary}</td>
+                <td>
+                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
+                </td>
+                <td>
+                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
+                </td>
+                <td>
+                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
+                </td>
+            </tr>`
         )
     }
 
     //Fills the modals for editing and deleting an employee
+    //value has to be type of string, response is the http response from the ajax call
     function fillModalInputFields(value, response) {
         $('#' + value + 'Name').val(response.Name)
         $('#' + value + 'Email').val(response.Email)
