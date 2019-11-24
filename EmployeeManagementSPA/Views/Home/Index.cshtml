@@ -432,6 +432,8 @@
                 url: '/employees/searchByName?name=' + name,
                 method: 'get',
                 success: function (response) {
+                    //Next line needs to be outside the loop because triggeres autocomplete ajax call
+                    searchName.autocomplete('close');
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     searchName.val('');
                     $.each(response, (ind, val) => {
@@ -452,7 +454,8 @@
                 url: '/employees/searchByEmail?email=' + email,
                 method: 'get',
                 success: function (response) {
-                    console.log(response);
+                    //Next line needs to be outside the loop because triggeres autocomplete ajax call
+                    searchEmail.autocomplete('close');
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     searchEmail.val('');
                     $.each(response, (ind, val) => {
@@ -473,6 +476,8 @@
                 url: '/employees/searchBySalary?salary=' + salary,
                 method: 'get',
                 success: function (response) {
+                    //Next line needs to be outside the loop because triggeres autocomplete ajax call
+                    searchSalary.autocomplete('close');
                     $('#tblEmployees').find("tr:gt(0)").remove();
                     searchSalary.val('');
                     $.each(response, (ind, val) => {

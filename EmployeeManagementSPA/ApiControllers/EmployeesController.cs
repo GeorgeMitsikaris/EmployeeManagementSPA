@@ -54,13 +54,8 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("employeeSalaries")]
         public IHttpActionResult GetEmployeesSalaries(string searchTerm)
         {
-            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString().Contains(searchTerm)).Select(e => e.Salary);
-            List<string> empSalaries = new List<string>();
-            foreach (var salary in employeeSalaries)
-            {
-                empSalaries.Add(salary.ToString());
-            }
-            return Ok(empSalaries);
+            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString().Contains(searchTerm)).Select(e => e.Salary.ToString());
+            return Ok(employeeSalaries);
         }
 
         //Returns an http response with a list of employees because two or more employees can have the same name
@@ -68,7 +63,7 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("searchByName")]
         public IHttpActionResult SearchEmployeesByName(string name)
         {
-            var employees = db.Employees.Where(e => e.Name.Equals(name));
+            var employees = db.Employees.Where(e => e.Name.Contains(name));
             return Ok(employees);
         }
 
@@ -77,7 +72,7 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("searchByEmail")]
         public IHttpActionResult SearchEmployeesByEmail(string email)
         {
-            var employees = db.Employees.Where(e => e.Email.Equals(email));
+            var employees = db.Employees.Where(e => e.Email.Contains(email));
             return Ok(employees);
         }
 
@@ -86,16 +81,18 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("searchBySalary")]
         public IHttpActionResult SearchEmployeesBySalary(string salary)
         {
-            decimal salaryDecimal = 0;
-            if (decimal.TryParse(salary, out salaryDecimal))
-            {
-                var employees = db.Employees.Where(e => e.Salary.Equals(salaryDecimal));
-                return Ok(employees);
-            }
-            else
-            {
-                return Content(HttpStatusCode.BadRequest, salary);
-            }
+            var employees = db.Employees.Where(e => e.Salary.ToString().Contains(salary));
+            return Ok(employees);
+            //decimal salaryDecimal = 0;
+            //if (decimal.TryParse(salary, out salaryDecimal))
+            //{
+            //    var employees = db.Employees.Where(e => e.Salary.Equals(salaryDecimal));
+            //    return Ok(employees);
+            //}
+            //else
+            //{
+            //    return Content(HttpStatusCode.BadRequest, salary);
+            //}
         }
 
         [HttpGet]
@@ -157,16 +154,6 @@ namespace EmployeeManagementSPA.ApiControllers
 
             return Ok(employees);
         }
-
-        //[HttpGet]
-        //[Route("pagination")]
-        //public IHttpActionResult Paging(int pageNumber, int numberOfRowsPerPage)
-        //{
-        //    var employees = db.Employees.ToList();
-        //    int numberOfRowsToSkip = (pageNumber - 1) * numberOfRowsPerPage;
-        //    employees = employees.Skip(numberOfRowsToSkip).Take(numberOfRowsPerPage).ToList();
-        //    return Ok(employees);
-        //}
 
         [HttpPost]
         [Route("")]
