@@ -14,7 +14,9 @@
                 <tr class="table-dark">
                     <td class="font-weight-bold">
                         <button id="sortByName" class="btn btn-block btn-warning">
-                            <span class="pr-3 d-inline">Name</span><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
+                            <span class="pr-3 d-inline">Name</span>
+                            <span class="fa fa-arrow-up pr-1"></span>
+                            <span class="fa fa-arrow-down"></span>
                         </button>
                         <div class="input-group-append">
                             <input id="txtSearchName" type="text" class="form-control" placeholder="Search" />
@@ -23,7 +25,9 @@
                     </td>
                     <td class="font-weight-bold">
                         <button id="sortByEmail" class="btn btn-block btn-warning mr-3">
-                            <span class="pr-3 d-inline">Email</span><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
+                            <span class="pr-3 d-inline">Email</span>
+                            <span class="fa fa-arrow-up pr-1"></span>
+                            <span class="fa fa-arrow-down"></span>
                         </button>
                         <div class="input-group-append">
                             <input id="txtSearchEmail" type="text" class="form-control" placeholder="Search" />
@@ -32,7 +36,9 @@
                     </td>
                     <td class="font-weight-bold">
                         <button id="sortBySalary" class="btn btn-block btn-warning mr-3">
-                            <span class="pr-3 d-inline">Salary</span><span class="fa fa-arrow-up pr-1"></span><span class="fa fa-arrow-down"></span>
+                            <span class="pr-3 d-inline">Salary</span>
+                            <span class="fa fa-arrow-up pr-1"></span>
+                            <span class="fa fa-arrow-down"></span>
                         </button>
                         <div class="input-group-append">
                             <input id="txtSearchSalary" type="text" class="form-control" placeholder="Search" />
@@ -425,7 +431,8 @@
             return $('<li></li>').append('<a>' + answer + '</a>').appendTo(ul);
         }
 
-        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole name pressing enter or tab
+        //Triggers the search functionality in case the user chooses not to use the autocomplete 
+        //and type the whole name pressing enter or tab
         searchName.change(function () {
             const name = $(this).val();
             $.ajax({
@@ -447,7 +454,8 @@
             })
         })
 
-        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole email pressing enter or tab
+        //Triggers the search functionality in case the user chooses not to use the autocomplete 
+        //and type the whole email pressing enter or tab
         searchEmail.change(function () {
             const email = $(this).val();
             $.ajax({
@@ -469,7 +477,8 @@
             })
         })
 
-        //Triggers the search functionality in case the user chooses not to use the autocomplete and type the whole salary pressing enter or tab
+        //Triggers the search functionality in case the user chooses not to use the autocomplete 
+        //and type the whole salary pressing enter or tab
         searchSalary.change(function () {
             const salary = $(this).val();
             $.ajax({
@@ -513,7 +522,9 @@
             //'done()' guarantees that the following code will execute after the completion of the previous ajax call
         }).done(() => {
             $.ajax({
-                url: `/employees/sortBy${sortingColumn}?sort=${sortDirection}&pageNumber=${pageNumber}&numberOfRowsPerPage=${rowsPerPage}`,
+                //Line is broken for better readability in github
+                url: `/employees/sortBy${sortingColumn}?sort=${sortDirection}&pageNumber=${pageNumber}
+                                                                                &numberOfRowsPerPage=${rowsPerPage}`,
                 method: 'get',
                 success: function (response) {
                     //Removes the current rows from the table in order to create the new ones
@@ -523,11 +534,15 @@
                     $('#paginationUl').empty();
 
                     //Creates the previous button
-                    //If the user is in the first page and presses the previous button the app doesn't break and stays in the first page
+                    //If the user is in the first page and presses the previous button the app doesn't break
+                    //and stays in the first page
                     const numberOfPages = Math.ceil(totalRows / rowsPerPage);
                     let prevPageNumber = pageNumber;
                     $(`<li class="page-item">
-                        <button data-page="${prevPageNumber == 1 ? 1 : prevPageNumber - 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Prev</button>
+                        <button data-page="${prevPageNumber == 1 ? 1 : prevPageNumber - 1}" data-rows="${rowsPerPage}"
+                            data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" 
+                            class="page-link">Prev
+                        </button>
                  </li>`).appendTo('#paginationUl');
 
                     //Creates the paging buttons
@@ -535,22 +550,30 @@
                         //Finds the current page and highlighs the respective button
                         if (i + 1 == pageNumber) {
                             $(`<li class="page-item active">
-                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
+                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} 
+                            data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}
+                        </button>
                  </li>`).appendTo('#paginationUl');
                         }
                         else {
                             $(`<li class="page-item">
-                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}</button>
+                        <button data-page="${i + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} 
+                            data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">${i + 1}
+                        </button>
                  </li>`).appendTo('#paginationUl');
 
                         }
                     }
 
                     //Creates the next button
-                    //If the user is in the last page and presses the next button the app doesn't break and stays in the last page
+                    //If the user is in the last page and presses the next button the app doesn't break and stays 
+                    //in the last page
                     let nextPageNumber = pageNumber;
                     $(`<li class="page-item">
-                        <button data-page="${nextPageNumber == numberOfPages ? nextPageNumber : nextPageNumber + 1}" data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} onclick="pagination(this)" class="page-link">Next</button>
+                        <button data-page="${nextPageNumber == numberOfPages ? nextPageNumber : nextPageNumber + 1}" 
+                            data-rows="${rowsPerPage}" data-sortdirection=${sortDirection} data-sortbycolumn=${sortingColumn} 
+                            onclick="pagination(this)" class="page-link">Next
+                        </button>
                  </li>`).appendTo('#paginationUl');
 
                     // The edit and delete buttons are created dynamically with the createTable() function
@@ -644,13 +667,16 @@
                       <div class="collapse navbar-collapse" id="navbarTogglerDemo${id}">
                         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                           <li class="nav-item">
-                            <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
+                            <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal"
+                                data-target="#employeeDetails" data-id="${id}">Details</button>
                           </li>
                           <li class="nav-item">
-                             <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
+                             <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal"
+                                data-target="#editModal" data-id="${id}">Edit</button>
                           </li>
                           <li class="nav-item">
-                           <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
+                           <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal"
+                                data-target="#deleteModal" data-id="${id}">Delete</button>
                           </li>
                         </ul>                       
                       </div>
@@ -666,13 +692,16 @@
                 <td>${email}</td>
                 <td>${salary}</td>
                 <td>
-                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal" data-target="#employeeDetails" data-id="${id}">Details</button>
+                    <button type="button" onclick="details(this)" class="btn btn-dark" data-toggle="modal"
+                        data-target="#employeeDetails" data-id="${id}">Details</button>
                 </td>
                 <td>
-                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal" data-target="#editModal" data-id="${id}">Edit</button>
+                    <button type="button" onclick="editItem(this)" class="btn btn-dark" data-toggle="modal"
+                        data-target="#editModal" data-id="${id}">Edit</button>
                 </td>
                 <td>
-                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-id="${id}">Delete</button>
+                    <button type="button" onclick="deleteItem(this)" class="btn btn-danger" data-toggle="modal"
+                        data-target="#deleteModal" data-id="${id}">Delete</button>
                 </td>
             </tr>`
             )

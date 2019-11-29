@@ -54,7 +54,8 @@ namespace EmployeeManagementSPA.ApiControllers
         [Route("employeeSalaries")]
         public IHttpActionResult GetEmployeesSalaries(string searchTerm)
         {
-            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString().Contains(searchTerm)).Select(e => e.Salary.ToString());
+            var employeeSalaries = db.Employees.Where(e => e.Salary.ToString().Contains(searchTerm))
+                .Select(e => e.Salary.ToString());
             return Ok(employeeSalaries);
         }
 
@@ -67,7 +68,8 @@ namespace EmployeeManagementSPA.ApiControllers
             return Ok(employees);
         }
 
-        //Returns an http response with a list of employees because ajax function expects an array of employees to create the table
+        //Returns an http response with a list of employees because ajax function expects an array of employees 
+        //to create the table
         [HttpGet]
         [Route("searchByEmail")]
         public IHttpActionResult SearchEmployeesByEmail(string email)
